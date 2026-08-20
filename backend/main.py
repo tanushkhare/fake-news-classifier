@@ -1,11 +1,12 @@
-from fastapi import FastAPI
+﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import classifier
+from backend.app.routers import classifier_router
+import uvicorn
 
 app = FastAPI(
-    title="AI Fake News Classifier API",
-    version="1.0.0",
-    description="API for analyzing and classifying news articles for credibility."
+    title="Fake News & Misinformation Classifier API",
+    description="Probabilistic credibility scoring and linguistic NLP feature extraction pipeline.",
+    version="1.0.0"
 )
 
 app.add_middleware(
@@ -16,8 +17,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(classifier.router)
+app.include_router(classifier_router.router)
 
-@app.get("/")
-def read_root():
-    return {"message": "Fake News Classifier Backend is running successfully!"}
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "fake-news-classifier"}
+
+if __name__ == "__main__":
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
